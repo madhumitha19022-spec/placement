@@ -16,8 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
+
+def home_view(request):
+    return JsonResponse({
+        "status": "healthy",
+        "message": "Campus Placement Management System Backend API is active and running.",
+        "api_base": "/api/",
+        "dashboard_stats": "/api/dashboard/stats/",
+        "admin_portal": "/admin/"
+    })
 
 urlpatterns = [
+    path('', home_view, name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('placement.urls')),
 ]

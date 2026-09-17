@@ -1,0 +1,22 @@
+{
+  "name": "placement-management-system",
+  "version": "1.0.0",
+  "description": "Campus Placement Management System built with React and Django REST Framework",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:backend": "python backend/test_api_endpoints.py",
+    "migrate:backend": "python backend/manage.py migrate",
+    "seed:backend": "python backend/manage.py seed_data",
+    "server:backend": "python backend/manage.py runserver 127.0.0.1:8000"
+  },
+  "keywords": [
+    "placement-management-system",
+    "react",
+    "django",
+    "drf",
+    "sqlite"
+  ],
+  "author": "Academic Project Team",
+  "license": "MIT"
+}

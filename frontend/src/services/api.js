@@ -1,7 +1,17 @@
 import axios from 'axios';
 
-// Base API configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+// Base API configuration with auto-detection for local dev and deployed Render backend
+let rawBase = import.meta.env.VITE_API_URL;
+if (!rawBase || rawBase.trim() === '') {
+  rawBase = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+    ? 'http://127.0.0.1:8000/api'
+    : 'https://placement-p0qd.onrender.com/api';
+}
+rawBase = rawBase.replace(/\/+$/, '');
+if (!rawBase.endsWith('/api')) {
+  rawBase = `${rawBase}/api`;
+}
+const API_BASE_URL = rawBase;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -30,7 +40,11 @@ api.interceptors.response.use(
     if (error.response) {
       const data = error.response.data;
       if (typeof data === 'string') {
-        message = data;
+        if (data.trim().startsWith('<')) {
+          message = `Server responded with status ${error.response.status} (${error.response.statusText || 'Error'}). Please check backend connection.`;
+        } else {
+          message = data;
+        }
       } else if (data.detail) {
         message = data.detail;
       } else if (data.error) {
@@ -47,7 +61,7 @@ api.interceptors.response.use(
         message = Array.isArray(val) ? `${firstKey}: ${val[0]}` : `${firstKey}: ${val}`;
       }
     } else if (error.request) {
-      message = 'Cannot connect to backend server. Make sure Django is running on port 8000.';
+      message = 'Cannot connect to backend server. Make sure the backend service is running and awake.';
     }
     return Promise.reject(new Error(message));
   }
